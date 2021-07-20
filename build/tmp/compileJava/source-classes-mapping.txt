@@ -1,0 +1,2 @@
+com/github/glassmc/installer/InstallerFrame.java
+ com.github.glassmc.installer.InstallerFrame
