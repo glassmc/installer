@@ -24,3 +24,5 @@ shadowJar {
 	archiveClassifier.set('')
 	archiveVersion.set('')
 }
+
+tasks.build.dependsOn('shadowJar')

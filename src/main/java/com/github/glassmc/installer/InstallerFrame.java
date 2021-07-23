@@ -87,11 +87,11 @@ public class InstallerFrame extends JFrame {
     }
 
     private String getDefaultPath(String environment) {
-        if(environment.equals("Client")) {
+        if (environment.equals("Client")) {
             String os = System.getProperty("os.name").toLowerCase();
-            if(os.contains("win")) {
+            if (os.contains("win")) {
                 return System.getProperty("APPDATA") + "/.minecraft";
-            } else if(os.contains("nux")) {
+            } else if (os.contains("nux")) {
                 return System.getProperty("user.home") + "/.minecraft";
             }
         }
@@ -102,8 +102,8 @@ public class InstallerFrame extends JFrame {
         new Thread(() -> {
             String environment = this.environmentGroup.getSelection().getActionCommand();
             String version = (String) this.versionComboBox.getSelectedItem();
-
-            if(environment.equals("Client")) {
+            if (version == null) return;
+            if (environment.equals("Client")) {
                 try {
                     URL url = new URL("https://api.github.com/repos/glassmc/loader/tags");
                     InputStream inputStream = url.openStream();
@@ -115,6 +115,7 @@ public class InstallerFrame extends JFrame {
 
                     File minecraftHome = new File(this.pathField.getText());
                     File latestLoaderFile = new File(minecraftHome, "libraries/com/github/glassmc/loader-client/" + latestTagSimple + "/loader-client-" + latestTagSimple + ".jar");
+                    latestLoaderFile.getParentFile().mkdirs();
                     URL latestLoaderClient = new URL("https://github.com/glassmc/loader/releases/download/" + latestTag + "/loader-client-" + latestTagSimple + ".jar");
                     InputStream latestLoaderStream = latestLoaderClient.openStream();
                     FileOutputStream fileOutputStream = new FileOutputStream(latestLoaderFile);
