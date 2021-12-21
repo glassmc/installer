@@ -26,4 +26,3 @@ shadowJar {
 }
 
 tasks.build.dependsOn('shadowJar')
-
