@@ -53,10 +53,12 @@ public class InstallerFrame extends JFrame {
         environmentPanel.add(server);
 
         this.versionComboBox = new JComboBox<>();
+        this.versionComboBox.setEditable(true);
         versionComboBox.addItem("1.7.10");
         versionComboBox.addItem("1.8.9");
         versionComboBox.addItem("1.12.2");
         versionComboBox.addItem("1.17.1");
+        versionComboBox.addItem("1.18.1");
 
         environmentPanel.add(versionComboBox);
 
