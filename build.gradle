@@ -10,6 +10,7 @@ repositories {
 dependencies {
     implementation 'com.formdev:flatlaf:1.6.5'
     implementation 'commons-io:commons-io:2.11.0'
+	implementation 'org.json:json:20211205'
 }
 
 jar {

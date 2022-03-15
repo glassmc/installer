@@ -1,7 +1,10 @@
 package com.github.glassmc.installer;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class InstallerFrame extends JFrame {
 
@@ -54,11 +58,16 @@ public class InstallerFrame extends JFrame {
 
         this.versionComboBox = new JComboBox<>();
         this.versionComboBox.setEditable(true);
-        versionComboBox.addItem("1.7.10");
-        versionComboBox.addItem("1.8.9");
-        versionComboBox.addItem("1.12.2");
-        versionComboBox.addItem("1.17.1");
-        versionComboBox.addItem("1.18.1");
+
+        try {
+            String versionsData = IOUtils.toString(new URL("https://raw.githubusercontent.com/glassmc/data/main/installer/versions.json"), StandardCharsets.UTF_8);
+            JSONArray versionsJson = new JSONArray(versionsData);
+            for (Object element : versionsJson) {
+                versionComboBox.addItem(element.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         environmentPanel.add(versionComboBox);
 
@@ -116,9 +125,9 @@ public class InstallerFrame extends JFrame {
                     String latestTagSimple = latestTag.substring(1);
 
                     File minecraftHome = new File(this.pathField.getText());
-                    File latestLoaderFile = new File(minecraftHome, "libraries/com/github/glassmc/loader-client/" + latestTagSimple + "/loader-client-" + latestTagSimple + ".jar");
+                    File latestLoaderFile = new File(minecraftHome, "libraries/com/github/glassmc/loader/" + latestTagSimple + "/loader-" + latestTagSimple + ".jar");
                     latestLoaderFile.getParentFile().mkdirs();
-                    URL latestLoaderClient = new URL("https://github.com/glassmc/loader/releases/download/" + latestTag + "/loader-client-" + latestTagSimple + ".jar");
+                    URL latestLoaderClient = new URL("https://github.com/glassmc/loader/releases/download/" + latestTag + "/loader-" + latestTagSimple + ".jar");
                     InputStream latestLoaderStream = latestLoaderClient.openStream();
                     FileOutputStream fileOutputStream = new FileOutputStream(latestLoaderFile);
 
@@ -130,11 +139,29 @@ public class InstallerFrame extends JFrame {
                     File versionJson = new File(versionFolder, versionName + ".json");
 
                     String json = IOUtils.toString(InstallerFrame.class.getClassLoader().getResourceAsStream("jsonTemplate.json"), StandardCharsets.UTF_8);
-                    json = json.replace("%ID%", versionName).replace("%VERSION%", version).replace("%LOADER_VERSION%", latestTagSimple).replace("%MAIN_CLASS%", "com.github.glassmc.loader.client.GlassClientMain");
+                    json = json.replace("%ID%", versionName).replace("%VERSION%", version).replace("%LOADER_VERSION%", latestTagSimple).replace("%MAIN_CLASS%", "com.github.glassmc.loader.bootstrap.GlassMain");
 
                     FileWriter fileWriter = new FileWriter(versionJson);
                     fileWriter.write(json);
                     fileWriter.close();
+
+                    File launcherProfilesFile = new File(minecraftHome, "launcher_profiles.json");
+                    String launcherProfiles = FileUtils.readFileToString(launcherProfilesFile, StandardCharsets.UTF_8);
+                    JSONObject jsonObject = new JSONObject(launcherProfiles);
+
+                    JSONObject versionJsonData = new JSONObject();
+                    versionJsonData.put("created", "1970-01-02T00:00:00.000Z");
+                    versionJsonData.put("lastUsed", "1970-01-02T00:00:00.000Z");
+                    versionJsonData.put("name", "");
+                    versionJsonData.put("type", "custom");
+                    versionJsonData.put("lastVersionId", versionName);
+
+                    URL logoUrl = new URL("https://github.com/glassmc/data/raw/main/installer/logo.png");
+                    versionJsonData.put("icon", "data:image/png;base64," + Base64.getEncoder().encodeToString(IOUtils.toByteArray(logoUrl)));
+
+                    jsonObject.getJSONObject("profiles").put(versionName, versionJsonData);
+
+                    FileUtils.write(launcherProfilesFile, jsonObject.toString(2));
 
                     JOptionPane.showMessageDialog(null, "Successfully installed Glass. You can now close this installer.");
                 } catch (IOException e) {
