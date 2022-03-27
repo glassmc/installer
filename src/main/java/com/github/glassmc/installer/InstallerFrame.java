@@ -138,7 +138,9 @@ public class InstallerFrame extends JFrame {
                     versionFolder.mkdirs();
                     File versionJson = new File(versionFolder, versionName + ".json");
 
-                    String json = IOUtils.toString(InstallerFrame.class.getClassLoader().getResourceAsStream("jsonTemplate.json"), StandardCharsets.UTF_8);
+                    String type = Integer.parseInt(version.split("\\.")[1]) > 12 ? "Modern" : "Legacy";
+
+                    String json = IOUtils.toString(InstallerFrame.class.getClassLoader().getResourceAsStream("jsonTemplate" + type + ".json"), StandardCharsets.UTF_8);
                     json = json.replace("%ID%", versionName).replace("%VERSION%", version).replace("%LOADER_VERSION%", latestTagSimple).replace("%MAIN_CLASS%", "com.github.glassmc.loader.bootstrap.GlassMain");
 
                     FileWriter fileWriter = new FileWriter(versionJson);
