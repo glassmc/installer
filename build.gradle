@@ -22,8 +22,23 @@ jar {
 
 shadowJar {
 	archiveBaseName.set('installer')
-	archiveClassifier.set('')
-	archiveVersion.set('')
 }
 
 tasks.build.dependsOn('shadowJar')
+
+
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = 'com.github.glassmc'
+			artifactId = 'installer'
+			version = '1.0'
+
+			from components.java
+		}
+	}
+}
+
+
+
