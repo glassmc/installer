@@ -1,6 +1,7 @@
 plugins {
-   id 'com.github.johnrengelman.shadow' version '7.0.0'
-   id 'java'
+	id 'com.github.johnrengelman.shadow' version '7.1.2'
+	id 'java'
+	id 'maven-publish'
 }
 
 repositories {
@@ -8,9 +9,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.formdev:flatlaf:1.6.5'
+    implementation 'com.formdev:flatlaf:2.1'
     implementation 'commons-io:commons-io:2.11.0'
-	implementation 'org.json:json:20211205'
+	implementation 'org.json:json:20220320'
 }
 
 jar {
@@ -18,7 +19,6 @@ jar {
 		attributes("Main-Class": "com.github.glassmc.installer.InstallerFrame")
 	}
 }
-
 
 shadowJar {
 	archiveBaseName.set('installer')
