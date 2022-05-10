@@ -104,6 +104,8 @@ public class InstallerFrame extends JFrame {
                 return System.getProperty("APPDATA") + "/.minecraft";
             } else if (os.contains("nux")) {
                 return System.getProperty("user.home") + "/.minecraft";
+            } else if (os.contains("mac")) {
+                return System.getProperty("user.home") + "/Library/Application Support/minecraft";
             }
         }
         return null;
